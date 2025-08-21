@@ -39,7 +39,7 @@ from manim.mobject.geometry.line import Line
 from manim.mobject.svg.svg_mobject import SVGMobject
 from manim.mobject.types.vectorized_mobject import VGroup, VMobject
 from manim.utils.tex import TexTemplate
-from manim.utils.tex_file_writing import tex_to_svg_file
+from manim.utils.tex_file_writing import render_tex_to_svg_file
 
 
 class SingleStringMathTex(SVGMobject):
@@ -77,7 +77,7 @@ class SingleStringMathTex(SVGMobject):
         self.tex_template: TexTemplate = tex_template
 
         self.tex_string = tex_string
-        file_name = tex_to_svg_file(
+        file_name = render_tex_to_svg_file(
             self._get_modified_expression(tex_string),
             environment=self.tex_environment,
             tex_template=self.tex_template,

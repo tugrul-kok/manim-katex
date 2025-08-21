@@ -21,7 +21,7 @@ from manim.utils.tex import TexTemplate
 
 from .. import config, logger
 
-__all__ = ["tex_to_svg_file"]
+__all__ = ["tex_to_svg_file", "render_tex_to_svg_file"]
 
 
 def tex_hash(expression: Any) -> str:
@@ -30,6 +30,41 @@ def tex_hash(expression: Any) -> str:
     hasher.update(id_str.encode())
     # Truncating at 16 bytes for cleanliness
     return hasher.hexdigest()[:16]
+
+
+def render_tex_to_svg_file(
+    expression: str,
+    environment: str | None = None,
+    tex_template: TexTemplate | None = None,
+) -> Path:
+    """Route to the appropriate tex renderer based on configuration.
+    
+    This function routes to either LaTeX or KaTeX renderer based on the 
+    config["tex_renderer"] setting.
+    
+    Parameters
+    ----------
+    expression
+        String containing the TeX expression to be rendered
+    environment
+        The string containing the environment in which the expression should be typeset
+    tex_template
+        Template class used for LaTeX rendering (ignored for KaTeX)
+        
+    Returns
+    -------
+    :class:`Path`
+        Path to generated SVG file.
+    """
+    renderer = config.get("tex_renderer", "latex").lower()
+    
+    if renderer == "katex":
+        from manim.utils.katex_renderer import katex_to_svg_file
+        return katex_to_svg_file(expression, environment)
+    elif renderer == "latex":
+        return tex_to_svg_file(expression, environment, tex_template)
+    else:
+        raise ValueError(f"Unknown tex renderer: {renderer}. Must be 'latex' or 'katex'.")
 
 
 def tex_to_svg_file(

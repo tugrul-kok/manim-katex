@@ -304,6 +304,7 @@ class ManimConfig(MutableMapping):
         "tex_dir",
         "tex_template",
         "tex_template_file",
+        "tex_renderer",
         "text_dir",
         "upto_animation_number",
         "renderer",
@@ -673,6 +674,10 @@ class ManimConfig(MutableMapping):
         val = parser["CLI"].get("tex_template_file")
         if val:
             self.tex_template_file = val
+            
+        val = parser["CLI"].get("tex_renderer")
+        if val:
+            self.tex_renderer = val
 
         val = parser["CLI"].get("progress_bar")
         if val:
@@ -840,6 +845,10 @@ class ManimConfig(MutableMapping):
         # Handle --tex_template
         if args.tex_template:
             self.tex_template = TexTemplate.from_file(args.tex_template)
+        
+        # Handle --tex_renderer
+        if hasattr(args, "tex_renderer") and args.tex_renderer:
+            self.tex_renderer = args.tex_renderer
 
         if self.renderer == RendererType.OPENGL and args.write_to_movie is None:
             # --write_to_movie was not passed on the command line, so don't generate video.
@@ -1794,6 +1803,17 @@ class ManimConfig(MutableMapping):
                 self._d["tex_template_file"] = Path(val)
         else:
             self._d["tex_template_file"] = val  # actually set the falsy value
+
+    @property
+    def tex_renderer(self) -> str:
+        """Tex renderer to use: 'latex' or 'katex'."""
+        return self._d["tex_renderer"]
+
+    @tex_renderer.setter
+    def tex_renderer(self, val: str) -> None:
+        if val not in ["latex", "katex"]:
+            raise ValueError(f"tex_renderer must be 'latex' or 'katex', got '{val}'")
+        self._d["tex_renderer"] = val
 
     @property
     def plugins(self) -> list[str]:

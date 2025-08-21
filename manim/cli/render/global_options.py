@@ -82,6 +82,12 @@ global_options = option_group(
     ),
     option("--tex_template", help="Specify a custom TeX template file.", default=None),
     option(
+        "--tex_renderer", 
+        type=Choice(["latex", "katex"], case_sensitive=False),
+        help="Choose the TeX renderer: 'latex' (default) or 'katex'.", 
+        default=None
+    ),
+    option(
         "-v",
         "--verbosity",
         type=Choice(
